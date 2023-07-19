@@ -1,5 +1,5 @@
 public class ReassignConOwnersAndSDRs {
-    public static void reassignContactsBasedOnIndustrySubType() {
+public static void reassignContactsBasedOnIndustrySubType() {
     try {
         // Fetch active users with specific names
         Map<String, Id> userNameToIdMap = fetchActiveUsersByNames(new List<String>{'Jay Bauer', 'Joe Horne Jr.', 'Joseph Perricone', 'Jamie Johnson', 'Jared Soga', 'Tommy'});
@@ -7,60 +7,119 @@ public class ReassignConOwnersAndSDRs {
         // Fetch contacts that need to be updated
         List<Contact> contactsToUpdate = new List<Contact>();
         for (Contact con : getContactsToUpdate()) {
-          // Check if Account is connected and not null (handle null pointer risk)
-                if (con.AccountId != null) {
-            // Get the Industry and Industry_Sub_Type__c values from the parent Account
-            String industry = con.Account.Industry;
-            String subIndustry = con.Account.Industry_Sub_Type__c;
-            
-            // Check if the Industry and Industry_Sub_Type__c values match the specified conditions
-            if ((industry == 'Energy, Utilities & Waste' && (subIndustry == 'Oil & Gas Exploration & Services' || subIndustry == 'Electricity' || subIndustry == 'Oil & Gas')) || 
-                (industry == 'Manufacturing' && (subIndustry == 'Textiles & Apparel' || subIndustry == 'Industrial Machinery & Equipment' || subIndustry == 'Test & Measurement Equipment' || subIndustry == 'Tires & Rubber' || subIndustry == 'Pet Products' || subIndustry == 'Chemicals & Related Products' || subIndustry == 'Appliances' || subIndustry == 'Aerospace & Defense' || subIndustry == 'Hand, Power & Lawn-care Tools' || subIndustry == 'Cleaning Products' || subIndustry == 'Boats & Submarines' || subIndustry == 'Photographic & Optical Equipment' || subIndustry == 'Watches & Jewelry' || subIndustry == 'Electronics' || subIndustry == 'Plastic, Packaging & Containers' || subIndustry == 'Cosmetics, Beauty Supply & Personal Care Products' || subIndustry == 'Wire & Cable' || subIndustry == 'Glass & Clay' || subIndustry == 'Household Goods' || subIndustry == 'Toys & Games' || subIndustry == 'Furniture' || subIndustry == 'Pulp & Paper' || subIndustry == 'Building Materials' || subIndustry == 'Health & Nutrition Products'||subIndustry=='Telecommunication Equipment'||
-                                                 subIndustry=='Sporting Goods'))) {
-                                                     
-                                                     // Get the User record with the name 'Jay Bauer' from the map
-                                                     Id newOwnerId = userNameToIdMap.get('Jay Bauer');
-                                                      // Check if the newOwnerId is null
-                                                      if (newOwnerId != null) {
-                                                     
-                                                     // Update the OwnerId and SDR_Name__c fields of the Contact record
-                                                     con.OwnerId = newOwnerId;
-                                                     con.SDR_Name__c = 'Kimberly O Neil';
-                                                     
-                                                     // Add the Contact record to the list of records to update
-                                                     contactsToUpdate.add(con);
-                                                      }
-                                                 } else if ((industry == 'Healthcare Services' && (subIndustry == 'Hospital Systems' || subIndustry=='Elderly Care Services'||subIndustry=='Mental Health & Rehabilitation Facilities'||subIndustry=='Medical Laboratories & Imaging Centers')) ||
-                                                            (industry=='Software'&& (subIndustry=='Healthcare Software')) || (industry=='Manufacturing'&& (subIndustry=='Medical Devices & Equipment')) ||
-                                                            (industry=='Hospitals & Physicians Clinics'&& (subIndustry=='Physicians Clinics' ||subIndustry=='Medical Specialists' ||subIndustry=='Medical & Surgical Hospitals' ||subIndustry=='Dental Offices'))
-                                                            || (industry=='Hospitality'&& (subIndustry=='Zoos & National Parks' ||subIndustry=='Fitness & Dance Facilities' ||subIndustry=='Museums & Art Galleries' ||subIndustry=='Libraries' ||subIndustry=='Sports Teams & Leagues'||subIndustry=='Restaurants' ||subIndustry=='Movie Theaters'||subIndustry=='Performing Arts Theaters'||subIndustry=='Cultural & Informational Centers'||subIndustry=='Amusement Parks, Arcades & Attractions' ||subIndustry=='Gambling & Gaming'||subIndustry=='Lodging & Resorts'||subIndustry=='Travel Agencies & Services' ))
-                                                            || (industry=='Business Services'&& (subIndustry=='Food Service' || subIndustry=='Facilities Management & Commercial Cleaning')) || 
-                                                            (industry=='Manufacturing' && (subIndustry=='Food & Beverage'))) {
-                                                                // Get the User record with the name 'Joe Horne Jr.' from the map
-                                                                Id newOwnerId = userNameToIdMap.get('Joe Horne Jr.');
-                                                                 // Check if the newOwnerId is null
-                                                                 if (newOwnerId != null) {
+            // Check if Account is connected and not null (handle null pointer risk)
+            if (con.Account!= null) {
+                // Get the Industry and Industry_Sub_Type__c values from the parent Account
+                String industry = con.Account.Industry;
+                String subIndustry = con.Account.Industry_Sub_Type__c;
+                
+                // Check if the Industry and Industry_Sub_Type__c values match the specified conditions
+                if ((industry == 'Energy, Utilities & Waste' && (subIndustry == 'Oil & Gas Exploration & Services' || subIndustry == 'Electricity' || subIndustry == 'Oil & Gas')) || 
+                    (industry == 'Manufacturing' && (subIndustry == 'Textiles & Apparel' || subIndustry == 'Industrial Machinery & Equipment' || subIndustry == 'Test & Measurement Equipment' || subIndustry == 'Tires & Rubber' || subIndustry == 'Pet Products' || subIndustry == 'Chemicals & Related Products' || subIndustry == 'Appliances' || subIndustry == 'Aerospace & Defense' || subIndustry == 'Hand, Power & Lawn-care Tools' || subIndustry == 'Cleaning Products' || subIndustry == 'Boats & Submarines' || subIndustry == 'Photographic & Optical Equipment' || subIndustry == 'Watches & Jewelry' || subIndustry == 'Electronics' || subIndustry == 'Plastic, Packaging & Containers' || subIndustry == 'Cosmetics, Beauty Supply & Personal Care Products' || subIndustry == 'Wire & Cable' || subIndustry == 'Glass & Clay' || subIndustry == 'Household Goods' || subIndustry == 'Toys & Games' || subIndustry == 'Furniture' || subIndustry == 'Pulp & Paper' || subIndustry == 'Building Materials' || subIndustry == 'Health & Nutrition Products'||subIndustry=='Telecommunication Equipment'||
+                                                        subIndustry=='Sporting Goods'))) {
+                                                            
+                                                            // Get the User record with the name 'Jay Bauer' from the map
+                                                            Id newOwnerId = userNameToIdMap.get('Jay Bauer');
+                                                            // Check if the newOwnerId is null
+                                                            if (newOwnerId != null) {
+                                                                
                                                                 // Update the OwnerId and SDR_Name__c fields of the Contact record
                                                                 con.OwnerId = newOwnerId;
-                                                                con.SDR_Name__c = 'Robby Williamson';
+                                                                con.SDR_Name__c = 'Kimberly O Neil';
                                                                 
                                                                 // Add the Contact record to the list of records to update
                                                                 contactsToUpdate.add(con);
-                                                                 }
-                                                            } else if ((industry =='Government' && (subIndustry =='Chambers of Commerce'||subIndustry =='Local'|| subIndustry =='Federal'||subIndustry =='State')) ||
-(industry =='Insurance' &&(subIndustry =='')) ||
-(industry =='Finc Serv' && (subIndustry =='Credit Cards & Transaction Processing')) ||
-(industry =='Business Services' &&(subIndustry =='Advertising & Marketing')) ||
-(industry =='Education' &&(subIndustry =='Colleges & Universities')) ||
-                                                                       (industry =='Transportation' &&(subIndustry =='Trucking, Moving & Storage' ||subIndustry =='Airlines, Airports & Air Services'||subIndustry =='Marine Shipping & Transportation'||subIndustry =='Rail, Bus & Taxi' ||subIndustry =='Freight & Logistics Services'))) {
-            // Add other else if conditions here if needed
+                                                            }
+                                                        } else if ((industry == 'Healthcare Services' && (subIndustry == 'Hospital Systems' || subIndustry=='Elderly Care Services'||subIndustry=='Mental Health & Rehabilitation Facilities'||subIndustry=='Medical Laboratories & Imaging Centers')) ||
+                                                                (industry=='Software'&& (subIndustry=='Healthcare Software')) || (industry=='Manufacturing'&& (subIndustry=='Medical Devices & Equipment')) ||
+                                                                (industry=='Hospitals & Physicians Clinics'&& (subIndustry=='Physicians Clinics' ||subIndustry=='Medical Specialists' ||subIndustry=='Medical & Surgical Hospitals' ||subIndustry=='Dental Offices'))
+                                                                || (industry=='Hospitality'&& (subIndustry=='Zoos & National Parks' ||subIndustry=='Fitness & Dance Facilities' ||subIndustry=='Museums & Art Galleries' ||subIndustry=='Libraries' ||subIndustry=='Sports Teams & Leagues'||subIndustry=='Restaurants' ||subIndustry=='Movie Theaters'||subIndustry=='Performing Arts Theaters'||subIndustry=='Cultural & Informational Centers'||subIndustry=='Amusement Parks, Arcades & Attractions' ||subIndustry=='Gambling & Gaming'||subIndustry=='Lodging & Resorts'||subIndustry=='Travel Agencies & Services' ))
+                                                                || (industry=='Business Services'&& (subIndustry=='Food Service' || subIndustry=='Facilities Management & Commercial Cleaning')) || 
+                                                                (industry=='Manufacturing' && (subIndustry=='Food & Beverage'))) {
+                                                                    // Get the User record with the name 'Joe Horne Jr.' from the map
+                                                                    Id newOwnerId = userNameToIdMap.get('Joe Horne Jr.');
+                                                                    // Check if the newOwnerId is null
+                                                                    if (newOwnerId != null) {
+                                                                        // Update the OwnerId and SDR_Name__c fields of the Contact record
+                                                                        con.OwnerId = newOwnerId;
+                                                                        con.SDR_Name__c = 'Robby Williamson';
+                                                                        
+                                                                        // Add the Contact record to the list of records to update
+                                                                        contactsToUpdate.add(con);
+                                                                    }
+                                                                } else if ((industry =='Government' && (subIndustry =='Chambers of Commerce'||subIndustry =='Local'|| subIndustry =='Federal'||subIndustry =='State')) ||
+                                                                            (industry =='Insurance' &&(subIndustry =='')) ||
+                                                                            (industry =='Finc Serv' && (subIndustry =='Credit Cards & Transaction Processing')) ||
+                                                                            (industry =='Business Services' &&(subIndustry =='Advertising & Marketing')) ||
+                                                                            (industry =='Education' &&(subIndustry =='Colleges & Universities')) ||
+                                                                            (industry =='Transportation' &&(subIndustry =='Trucking, Moving & Storage' ||subIndustry =='Airlines, Airports & Air Services'||subIndustry =='Marine Shipping & Transportation'||subIndustry =='Rail, Bus & Taxi' ||subIndustry =='Freight & Logistics Services'))) {
+                                                                                // Get the User record with the name 'Joseph Perricone' from the map
+                                                                                Id newOwnerId = userNameToIdMap.get('Joseph Perricone');
+                                                                                // Check if the newOwnerId is null
+                                                                                if (newOwnerId != null) {
+                                                                                    // Update the OwnerId and SDR_Name__c fields of the Contact record
+                                                                                    con.OwnerId = newOwnerId;
+                                                                                    con.SDR_Name__c = 'Savannah Ross';          
+                                                                                    contactsToUpdate.add(con);
+                                                                                }
+                                                                            }  else if ((industry == 'Retail' && (subIndustry == 'Convenience Stores, Gas Stations & Liquor Stores' || subIndustry == 'Sporting & Recreational Equipment Retail'||
+                                                                                                                    subIndustry == 'Vitamins, Supplements & Health Stores' ||subIndustry =='Drug Stores & Pharmacies' || subIndustry =='Department Stores, Shopping Centers & Superstores' ||
+                                                                                                                    subIndustry == 'Furniture'|| subIndustry =='Record, Video & Book Stores' || subIndustry =='Toys & Games' || subIndustry == 'Home Improvement & Hardware Retail' ||
+                                                                                                                    subIndustry == 'Office Products Retail & Distribution' || subIndustry == 'Pet Products' || subIndustry == 'Jewelry & Watch Retail' || subIndustry =='Grocery Retail' ||
+                                                                                                                    subIndustry == 'Auctions' || subIndustry == 'Consumer Electronics & Computers Retail' || subIndustry == 'Apparel & Accessories Retail' || subIndustry =='Other Rental Stores (Furniture, A/V, Construction & Industrial Equipment' ||
+                                                                                                                    subIndustry =='Flowers, Gifts & Specialty Stores')) || (industry =='Telecommunications' && (subIndustry =='Cable & Satellite' || subIndustry =='Internet Service Providers, Website Hosting & Internet-related Services' ||
+                                                                                                                                                                                                                subIndustry =='Telephony & Wireless')) || (industry =='Manufacturing' &&(subIndustry =='Telecommunication Equipment'))) {
+                                                                                                                                                                                                                    
+                                                                                                                                                                                                                    // Get the User record with the name 'Jamie Johnson' from the map
+                                                                                                                                                                                                                    Id newOwnerId = userNameToIdMap.get('Jamie Johnson');
+                                                                                                                                                                                                                    // Check if the newOwnerId is null
+                                                                                                                                                                                                                    if (newOwnerId != null) {
+                                                                                                                                                                                                                        // Update the OwnerId and SDR_Name__c fields of the Contact record
+                                                                                                                                                                                                                        con.OwnerId = newOwnerId;
+                                                                                                                                                                                                                        con.SDR_Name__c = 'Kimberly O Neil';          
+                                                                                                                                                                                                                        contactsToUpdate.add(con);
+                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                    
+                                                                                                                                                                                                                } else if ((industry == 'Business Services' && (subIndustry ==  'HR & Staffing')) || 
+                                                                                                                                                                                                                        (industry == '(Professional Services)' && (subIndustry == 'Security Products & Services' || subIndustry =='Debt Collection' || subIndustry =='Management Consulting' ||
+                                                                                                                                                                                                                                                                    subIndustry =='Research & Development' ||  subIndustry =='Information & Document Management' ||subIndustry == 'Commercial Printing' || subIndustry =='Translation & Linguistic Services'
+                                                                                                                                                                                                                                                                    ||  subIndustry =='Accounting Services' || subIndustry =='Multimedia & Graphic Design' || subIndustry =='Call Centers & Business Centers')) ||
+                                                                                                                                                                                                                        (industry == 'Finance' && (subIndustry == 'Banking' || subIndustry == 'Venture Capital & Private Equity' || subIndustry == 'Lending & Brokerage' || subIndustry == 'Investment Banking')) ||
+                                                                                                                                                                                                                        (industry == 'Manufacturing' && (subIndustry == 'Motor Vehicles' || subIndustry == 'Automotive Parts' || subIndustry == 'Automobile Dealers' || subIndustry == 'Automobile Parts Stores'))) {
+                                                                                                                                                                                                                            
+                                                                                                                                                                                                                            // Get the User record with the name 'Jared Soga' from the map
+                                                                                                                                                                                                                            Id newOwnerId = userNameToIdMap.get('Jared Soga');
+                                                                                                                                                                                                                            // Check if the newOwnerId is null
+                                                                                                                                                                                                                            if (newOwnerId != null) {
+                                                                                                                                                                                                                                // Update the OwnerId and SDR_Name__c fields of the Contact record
+                                                                                                                                                                                                                                con.OwnerId = newOwnerId;
+                                                                                                                                                                                                                                con.SDR_Name__c = 'Maddie Urban';          
+                                                                                                                                                                                                                                contactsToUpdate.add(con);
+                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                            
+                                                                                                                                                                                                                        } else if ((industry == 'Manufacturing' && (subIndustry == 'Pharmaceuticals' || subIndustry == 'BioTech')) || 
+                                                                                                                                                                                                                                    (industry == 'Software' && (subIndustry =='Supply Chain Management (SCM) Software' ||subIndustry =='Mobile App Development' || subIndustry =='Business Intelligence (BI) Software' || subIndustry =='Legal Software' ||
+                                                                                                                                                                                                                                                                subIndustry =='Customer Relationship Management (CRM) Software' || subIndustry =='Engineering Software' || subIndustry =='Networking Software' || subIndustry =='Storage & System Management Software' || subIndustry =='Human Resources Software' || subIndustry =='Financial Software' || subIndustry =='Database & File Management Software' ||
+                                                                                                                                                                                                                                                                subIndustry =='Security Software' || subIndustry =='Enterprise Resource Planning (ERP) Software' || subIndustry =='Multimedia, Games & Graphics Software' || subIndustry =='Content & Collaboration Software')) ||
+                                                                                                                                                                                                                                    (industry == 'High Tech' && (subIndustry =='')) ||  (industry == 'Manufacturing' && (subIndustry =='Electronics')) ||  (industry == 'Holding Companies & Conglomerates' && (subIndustry =='Cloud Companies')) ||
+                                                                                                                                                                                                                                    (industry == 'Media & Internet' && (subIndustry =='Broadcasting')) ||   (industry == 'Manufacturing' && (subIndustry =='Computer Equipment & Peripherals')) ||
+                                                                                                                                                                                                                                    (industry == 'Business Services' && (subIndustry =='Custom Software & IT Services'))) {
+                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                        // Get the User record with the name 'Jared Soga' from the map
+                                                                                                                                                                                                                                        Id newOwnerId = userNameToIdMap.get('Jared Soga');
+                                                                                                                                                                                                                                        // Check if the newOwnerId is null
+                                                                                                                                                                                                                                        if (newOwnerId != null) {
+                                                                                                                                                                                                                                            // Update the OwnerId and SDR_Name__c fields of the Contact record
+                                                                                                                                                                                                                                            con.OwnerId = newOwnerId;
+                                                                                                                                                                                                                                            con.SDR_Name__c = 'Maddie Urban';          
+                                                                                                                                                                                                                                            contactsToUpdate.add(con);
+                                                                                                                                                                                                                                        }                                                                                                                                                                                                                                   
+                                                                                                                                                                                                                                    }
+            }
         }
-                }
-       
-        }
-         // Perform the update in a single DML statement
-         Database.update(contactsToUpdate);
-    } catch (Exception e) {
+            // Perform the update in a single DML statement
+            Database.update(contactsToUpdate);
+        } catch (Exception e) {
             // Handle any exceptions that may occur during execution
             System.debug(LoggingLevel.ERROR,'An error occurred: ' + e.getMessage());
         }
