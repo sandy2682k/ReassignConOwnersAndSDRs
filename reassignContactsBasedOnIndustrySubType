@@ -3,13 +3,12 @@ public class ReassignConOwnersAndSDRs {
     try {
         // Fetch active users with specific names
         Map<String, Id> userNameToIdMap = fetchActiveUsersByNames(new List<String>{'Jay Bauer', 'Joe Horne Jr.', 'Joseph Perricone', 'Jamie Johnson', 'Jared Soga', 'Tommy'});
-                                                                                   //The reason behind putting these values hardcoded is Tommy I can fetch all other values by putting 
-                                                                                   //user Profile.Name = 'Account Executive' but Tommy has a different profile here.
-
         
         // Fetch contacts that need to be updated
         List<Contact> contactsToUpdate = new List<Contact>();
         for (Contact con : getContactsToUpdate()) {
+          // Check if Account is connected and not null (handle null pointer risk)
+                if (con.AccountId != null) {
             // Get the Industry and Industry_Sub_Type__c values from the parent Account
             String industry = con.Account.Industry;
             String subIndustry = con.Account.Industry_Sub_Type__c;
@@ -18,8 +17,11 @@ public class ReassignConOwnersAndSDRs {
             if ((industry == 'Energy, Utilities & Waste' && (subIndustry == 'Oil & Gas Exploration & Services' || subIndustry == 'Electricity' || subIndustry == 'Oil & Gas')) || 
                 (industry == 'Manufacturing' && (subIndustry == 'Textiles & Apparel' || subIndustry == 'Industrial Machinery & Equipment' || subIndustry == 'Test & Measurement Equipment' || subIndustry == 'Tires & Rubber' || subIndustry == 'Pet Products' || subIndustry == 'Chemicals & Related Products' || subIndustry == 'Appliances' || subIndustry == 'Aerospace & Defense' || subIndustry == 'Hand, Power & Lawn-care Tools' || subIndustry == 'Cleaning Products' || subIndustry == 'Boats & Submarines' || subIndustry == 'Photographic & Optical Equipment' || subIndustry == 'Watches & Jewelry' || subIndustry == 'Electronics' || subIndustry == 'Plastic, Packaging & Containers' || subIndustry == 'Cosmetics, Beauty Supply & Personal Care Products' || subIndustry == 'Wire & Cable' || subIndustry == 'Glass & Clay' || subIndustry == 'Household Goods' || subIndustry == 'Toys & Games' || subIndustry == 'Furniture' || subIndustry == 'Pulp & Paper' || subIndustry == 'Building Materials' || subIndustry == 'Health & Nutrition Products'||subIndustry=='Telecommunication Equipment'||
                                                  subIndustry=='Sporting Goods'))) {
+                                                     
                                                      // Get the User record with the name 'Jay Bauer' from the map
                                                      Id newOwnerId = userNameToIdMap.get('Jay Bauer');
+                                                      // Check if the newOwnerId is null
+                                                      if (newOwnerId != null) {
                                                      
                                                      // Update the OwnerId and SDR_Name__c fields of the Contact record
                                                      con.OwnerId = newOwnerId;
@@ -27,6 +29,7 @@ public class ReassignConOwnersAndSDRs {
                                                      
                                                      // Add the Contact record to the list of records to update
                                                      contactsToUpdate.add(con);
+                                                      }
                                                  } else if ((industry == 'Healthcare Services' && (subIndustry == 'Hospital Systems' || subIndustry=='Elderly Care Services'||subIndustry=='Mental Health & Rehabilitation Facilities'||subIndustry=='Medical Laboratories & Imaging Centers')) ||
                                                             (industry=='Software'&& (subIndustry=='Healthcare Software')) || (industry=='Manufacturing'&& (subIndustry=='Medical Devices & Equipment')) ||
                                                             (industry=='Hospitals & Physicians Clinics'&& (subIndustry=='Physicians Clinics' ||subIndustry=='Medical Specialists' ||subIndustry=='Medical & Surgical Hospitals' ||subIndustry=='Dental Offices'))
@@ -35,19 +38,28 @@ public class ReassignConOwnersAndSDRs {
                                                             (industry=='Manufacturing' && (subIndustry=='Food & Beverage'))) {
                                                                 // Get the User record with the name 'Joe Horne Jr.' from the map
                                                                 Id newOwnerId = userNameToIdMap.get('Joe Horne Jr.');
-                                                                
+                                                                 // Check if the newOwnerId is null
+                                                                 if (newOwnerId != null) {
                                                                 // Update the OwnerId and SDR_Name__c fields of the Contact record
                                                                 con.OwnerId = newOwnerId;
                                                                 con.SDR_Name__c = 'Robby Williamson';
                                                                 
                                                                 // Add the Contact record to the list of records to update
                                                                 contactsToUpdate.add(con);
-                                                            }
-  
+                                                                 }
+                                                            } else if ((industry =='Government' && (subIndustry =='Chambers of Commerce'||subIndustry =='Local'|| subIndustry =='Federal'||subIndustry =='State')) ||
+(industry =='Insurance' &&(subIndustry =='')) ||
+(industry =='Finc Serv' && (subIndustry =='Credit Cards & Transaction Processing')) ||
+(industry =='Business Services' &&(subIndustry =='Advertising & Marketing')) ||
+(industry =='Education' &&(subIndustry =='Colleges & Universities')) ||
+                                                                       (industry =='Transportation' &&(subIndustry =='Trucking, Moving & Storage' ||subIndustry =='Airlines, Airports & Air Services'||subIndustry =='Marine Shipping & Transportation'||subIndustry =='Rail, Bus & Taxi' ||subIndustry =='Freight & Logistics Services'))) {
+            // Add other else if conditions here if needed
         }
-        
-        //update records
-        update contactsToUpdate;
+                }
+       
+        }
+         // Perform the update in a single DML statement
+         Database.update(contactsToUpdate);
     } catch (Exception e) {
             // Handle any exceptions that may occur during execution
             System.debug(LoggingLevel.ERROR,'An error occurred: ' + e.getMessage());
@@ -65,7 +77,7 @@ public class ReassignConOwnersAndSDRs {
     
     // Method to fetch contacts that need to be updated
     private static List<Contact> getContactsToUpdate() {
-        return [SELECT Id, FirstName, LastName, Account.Industry, Account.Industry_Sub_Type__c, Owner.Name, OwnerId
+        return [SELECT Id, FirstName, LastName, Account.Industry, Account.Industry_Sub_Type__c, Owner.Name, OwnerId,AccountId
                 FROM Contact
                 WHERE Owner.IsActive = false AND ((Owner.Title LIKE '%SDR%' OR Owner.Title LIKE '%AE%') OR (Owner.Profile.Name LIKE '%SDR%' OR Owner.Profile.Name LIKE '%AE%'))];
     }
